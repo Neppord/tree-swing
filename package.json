@@ -1,0 +1,19 @@
+{
+  "name": "tree-swing",
+  "version": "1.0.0",
+  "description": "language agnostic refactoring library in purescript",
+  "scripts": {
+    "spago": "spago",
+    "format": "purs-tidy format-in-place src/**/*.purs test/**/*.purs",
+    "build": "spago build",
+    "start": "spago run",
+    "test": "spago test"
+  },
+  "author": "Samuel Ytterbrink",
+  "license": "MIT",
+  "devDependencies": {
+    "purescript": "^0.14.3",
+    "purs-tidy": "^0.3.2",
+    "spago": "^0.20.3"
+  }
+}
