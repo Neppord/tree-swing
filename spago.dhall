@@ -15,6 +15,8 @@ to generate this file without the comments in this block.
   [ "console"
   , "effect"
   , "language-cst-parser"
+  , "maybe"
+  , "partial"
   , "prelude"
   , "profunctor-lenses"
   , "psci-support"
