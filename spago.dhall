@@ -16,6 +16,7 @@ to generate this file without the comments in this block.
   , "effect"
   , "language-cst-parser"
   , "maybe"
+  , "newtype"
   , "partial"
   , "prelude"
   , "profunctor-lenses"
