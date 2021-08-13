@@ -31,19 +31,19 @@ newtype Project = Project (Array (Module Void))
 
 derive instance newtypeProject :: Newtype Project _
 
-_modules :: forall t29. Profunctor t29 => Wander t29 => t29 (Module Void) (Module Void) -> t29 Project Project
+_modules :: forall t29. Wander t29 => t29 (Module Void) (Module Void) -> t29 Project Project
 _modules = unto Project <<< traversed
 
-_header :: forall t58. Profunctor t58 => Strong t58 => t58 (ModuleHeader Void) (ModuleHeader Void) -> t58 (Module Void) (Module Void)
+_header :: forall t58. Strong t58 => t58 (ModuleHeader Void) (ModuleHeader Void) -> t58 (Module Void) (Module Void)
 _header = unto Module <<< prop (Proxy :: Proxy "header")
 
-_body :: forall t175. Profunctor t175 => Strong t175 => t175 (ModuleBody Void) (ModuleBody Void) -> t175 (Module Void) (Module Void)
+_body :: forall t175. Strong t175 => t175 (ModuleBody Void) (ModuleBody Void) -> t175 (Module Void) (Module Void)
 _body = unto Module <<< prop (Proxy :: Proxy "body")
 
-_decls :: forall t143. Profunctor t143 => Strong t143 => t143 (Array (Declaration Void)) (Array (Declaration Void)) -> t143 (ModuleBody Void) (ModuleBody Void)
+_decls :: forall t143. Strong t143 => t143 (Array (Declaration Void)) (Array (Declaration Void)) -> t143 (ModuleBody Void) (ModuleBody Void)
 _decls = unto ModuleBody <<< prop (Proxy :: Proxy "decls")
 
-_headerName :: forall t66 t67. Profunctor t67 => Strong t67 => t67 (Name ModuleName) (Name ModuleName) -> t67 (ModuleHeader t66) (ModuleHeader t66)
+_headerName :: forall t66 t67. Strong t67 => t67 (Name ModuleName) (Name ModuleName) -> t67 (ModuleHeader t66) (ModuleHeader t66)
 _headerName = unto ModuleHeader <<< prop (Proxy :: Proxy "name")
 
 _declValue :: forall p. Choice p => p  (ValueBindingFields Void) (ValueBindingFields Void) -> p (Declaration Void) (Declaration Void)
@@ -54,18 +54,18 @@ _declValue = prism' DeclValue case _ of
 _ident :: forall p. Profunctor p => p String String -> p Ident Ident
 _ident = unto Ident
 
-_nameValue :: forall t27 t28. Profunctor t28 => Strong t28 => t28 t27 t27 -> t28 (Name t27) (Name t27)
+_nameValue :: forall t27 t28. Strong t28 => t28 t27 t27 -> t28 (Name t27) (Name t27)
 _nameValue = unto Name <<< prop (Proxy :: Proxy "name")
 
-_modulesDeclartaions :: forall s. Profunctor s => Strong s => s (Array (Declaration Void)) (Array (Declaration Void)) -> s (Module Void) (Module Void)
+_modulesDeclartaions :: forall s. Strong s => s (Array (Declaration Void)) (Array (Declaration Void)) -> s (Module Void) (Module Void)
 _modulesDeclartaions = _body <<< _decls
 
-_modulesValueDeclarationNames :: forall t200. Profunctor t200 => Strong t200 => Wander t200 => t200 String String -> t200 (Module Void) (Module Void)
+_modulesValueDeclarationNames :: forall t200. Strong t200 => Wander t200 => t200 String String -> t200 (Module Void) (Module Void)
 _modulesValueDeclarationNames =
     _modulesDeclartaions <<< traversed
         <<< _declValue <<< prop (Proxy :: Proxy "name") <<< _nameValue <<< _ident
 
-_moduleName :: forall t113. Profunctor t113 => Strong t113 => t113 String String -> t113 (Module Void) (Module Void)
+_moduleName :: forall t113. Strong t113 => t113 String String -> t113 (Module Void) (Module Void)
 _moduleName = _header <<< _headerName <<< _nameValue <<< unto ModuleName
 
 code :: Module Void
