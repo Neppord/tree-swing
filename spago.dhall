@@ -19,6 +19,7 @@ to generate this file without the comments in this block.
   , "newtype"
   , "partial"
   , "prelude"
+  , "profunctor"
   , "profunctor-lenses"
   , "psci-support"
   ]
