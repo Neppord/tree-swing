@@ -2,22 +2,23 @@ module Main where
 
 import Prelude
 
+import Data.Array.NonEmpty (NonEmptyArray, head, singleton, zipWith)
 import Data.Lens.Fold (filtered, toArrayOf)
 import Data.Lens.Getter (view)
 import Data.Lens.Iso.Newtype (unto)
+import Data.Lens.Lens (lens)
 import Data.Lens.Prism (prism')
 import Data.Lens.Record (prop)
 import Data.Lens.Setter ((<>~))
 import Data.Lens.Traversal (traversed)
 import Data.Lens.Types (Iso', Lens', Prism', Traversal')
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
-import Data.Profunctor.Choice (class Choice)
+import Data.Newtype (class Newtype, unwrap, wrap)
 import Effect (Effect)
 import Effect.Console (logShow)
 import Partial.Unsafe (unsafeCrashWith)
 import PureScript.CST (RecoveredParserResult(..), parseModule)
-import PureScript.CST.Types (Declaration(..), Ident(..), Module(..), ModuleBody(..), ModuleHeader(..), ModuleName(..), Name(..), ValueBindingFields)
+import PureScript.CST.Types (Declaration(..), Expr, Guarded(..), Ident(..), ImportDecl(..), Module(..), ModuleBody(..), ModuleHeader(..), ModuleName(..), Name(..), ValueBindingFields, Where(..))
 import Type.Proxy (Proxy(..))
 
 parse :: String -> Module Void
@@ -43,6 +44,15 @@ _decls = unto ModuleBody <<< prop (Proxy :: Proxy "decls")
 
 _headerName :: Lens' (ModuleHeader Void) (Name ModuleName)
 _headerName = unto ModuleHeader <<< prop (Proxy :: Proxy "name")
+
+_headerImports :: Lens' (ModuleHeader Void) (Array (ImportDecl Void))
+_headerImports = unto ModuleHeader <<< prop (Proxy :: Proxy "imports")
+
+_imports :: Lens' (Module Void) (Array (ImportDecl Void))
+_imports = _header <<< _headerImports
+
+_importedModule :: Lens' (ImportDecl Void) (Name ModuleName)
+_importedModule = unto ImportDecl <<< prop (Proxy :: Proxy "module")
 
 _declValue :: Prism' (Declaration Void) (ValueBindingFields Void)
 _declValue = prism' DeclValue case _ of
@@ -90,8 +100,26 @@ project = Project
       """
      ]
 
-_moduleWithName :: forall t137. Choice t137 => String -> t137 (Module Void) (Module Void) -> t137 (Module Void) (Module Void)
+
+_moduleWithName ::  String -> Prism' (Module Void) (Module Void)
 _moduleWithName name = filtered (\ c -> view (_moduleName ) c == name )
+
+_where :: Lens' (Guarded Void) (NonEmptyArray (Where Void))
+_where = lens get set
+    where
+    get = case _ of
+        Unconditional _ w -> singleton w
+        Guarded guardedExprs -> map (_.where <<< unwrap) guardedExprs
+    set s b = case s of
+        Unconditional token _ -> Unconditional token (head b)
+        Guarded noneEmpty -> Guarded (zipWith (\w e -> wrap $ (unwrap e) {where = w}) b noneEmpty)
+
+_expr :: Lens' (Where Void) (Expr Void)
+_expr = unto Where <<< prop (Proxy :: Proxy "expr")
+
+_foo :: Traversal' (Declaration Void) (Where Void)
+_foo = _declValue <<< prop (Proxy :: Proxy "guarded") <<< _where <<< traversed
+
 
 main :: Effect Unit
 main = do
