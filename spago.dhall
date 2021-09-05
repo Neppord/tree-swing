@@ -12,16 +12,20 @@ to generate this file without the comments in this block.
 -}
 { name = "my-project"
 , dependencies =
-  [ "console"
+  [ "aff"
+  , "arrays"
+  , "console"
   , "effect"
   , "language-cst-parser"
+  , "lists"
   , "maybe"
   , "newtype"
   , "partial"
   , "prelude"
-  , "profunctor"
   , "profunctor-lenses"
   , "psci-support"
+  , "spec"
+  , "spec-discovery"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
