@@ -76,16 +76,6 @@ _modulesValueDeclarationNames =
 _moduleName :: Lens' (Module Void) String
 _moduleName = _header <<< _headerName <<< _nameValue <<< unto ModuleName
 
-code :: Module Void
-code = parse
-  """
-  module Main where
-
-  f = 1
-  add a b = a + b
-
-  """
-
 project :: Project
 project = Project
     [ parse """
